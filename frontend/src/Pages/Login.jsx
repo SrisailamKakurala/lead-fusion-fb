@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import axios from 'axios';
 import FullScreenImage from '../components/FullScreenImage';
 import logo from '../assets/logo.png';
-import { createBrowserHistory } from 'history';
 
 const Login = () => {
+    
+    const navigate = useNavigate(); // Initialize useNavigate hook
 
     const API = 'https://otp-1.onrender.com';
     useEffect(() => {
@@ -14,10 +15,8 @@ const Login = () => {
         }
     });
 
-    const history = createBrowserHistory();
-
     const handleGoBack = () => {
-        history.back(); // Navigate to the previous page
+        setStep(1) // Navigate to the previous page
     };
 
     const [countryCode, setCountryCode] = useState('+91');
@@ -25,21 +24,42 @@ const Login = () => {
     const [otp, setOtp] = useState('');
     const [step, setStep] = useState(1);
     const [isChecked, setIsChecked] = useState(false); // State for terms and conditions checkbox
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isValidNumber, setIsValidNumber] = useState(false);
 
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    const validateMobileNumber = (number) => {
+        const isValid = /^\d{10}$/.test(number); // Adjust the regex pattern based on the expected number length
+        if (!isValid) {
+            setErrorMessage('Please enter a valid number');
+            setIsValidNumber(false);
+        } else {
+            setErrorMessage('');
+            setIsValidNumber(true);
+        }
+    };
+
+    const handleMobileNumberChange = (e) => {
+        const number = e.target.value;
+        setMobileNumber(number);
+        validateMobileNumber(number);
+    };
 
     const sendOtp = async () => {
+         if (!isValidNumber) {
+            return;
+        }
+
         try {
             setStep(2); // Move to OTP input step
             const response = await axios.post(`${API}/api/otp/send-otp`, {
                 country_code: countryCode,
                 mobile_number: mobileNumber
             });
-            // console.log(response);
             console.log('OTP sent:', response.data);
-            
+            setErrorMessage(''); // Clear any previous error messages
         } catch (error) {
             console.error('Error sending OTP:', error);
+            setErrorMessage('Error sending OTP. Please try again.');
         }
     };
 
@@ -86,7 +106,7 @@ const Login = () => {
                         <div className="flex gap-2 mt-5">
                             {/* Select tag for country codes */}
                             <select
-                                className='w-24 p-2 rounded-lg bg-slate-100 focus:ring focus:ring-green-600'
+                                className='w-28 p-2 rounded-lg bg-slate-100 focus:ring focus:ring-green-600'
                                 value={countryCode}
                                 onChange={e => setCountryCode(e.target.value)}
                             >
@@ -102,7 +122,7 @@ const Login = () => {
                                 type="text"
                                 placeholder="Mobile Number"
                                 value={mobileNumber}
-                                onChange={(e) => setMobileNumber(e.target.value)}
+                                onChange={(e) => handleMobileNumberChange(e)}
                             />
                         </div>
                         <div className="flex justify-center">
@@ -116,6 +136,7 @@ const Login = () => {
                             />
                             I agree to the <span className='underline text-green-600 mx-1'>terms</span> and <span className='mx-1 underline text-green-600'>conditions</span>
                         </div>
+                        { errorMessage? <p className="text-red-600 text-center mx-auto">{errorMessage}</p> : ''}
                         <button
                             className={`mt-6 ${isChecked && mobileNumber ? 'bg-green-800 hover:bg-green-600' : 'bg-gray-400 cursor-not-allowed'} duration-200 shadow-xl rounded-md py-2 px-4 text-white font-semibold`}
                             onClick={sendOtp}

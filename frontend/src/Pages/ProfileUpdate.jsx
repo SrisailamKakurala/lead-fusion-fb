@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
 import image from '../assets/image.png'
 
 function ProfileUpdate() {
 
     const API = 'https://otp-1.onrender.com'
 
-    const history = createBrowserHistory();
     const navigate = useNavigate();
 
     const handleGoBack = () => {
-        history.back(); // Navigate to the previous page
+        navigate('/'); // Navigate to the previous page
     };
 
     const showProfile = () => {
@@ -114,7 +112,7 @@ function ProfileUpdate() {
 
             {
                 pop == true ? (
-                    <div className='transition ease-in duration-200 w-[100vw] bg-[rgba(0,0,0,0.2)] h-full flex justify-center items-center absolute top-0 bottom-0 left-0 right-0'>
+                    <div className='transition ease-in duration-200 w-[100vw] bg-[rgba(0,0,0,0.2)] h-full flex justify-center items-center fixed top-0 bottom-0 left-0 right-0'>
                         <div className="popover rounded-2xl p-3 bg-white w-60 text-center flex flex-col justify-center items-center">
                             <img src={image} className='w-40 h-30 rounded-2xl' alt="" />
                             <h1 className="text-xl font-bold text-green-900 mt-2">Account Created</h1>
@@ -127,8 +125,8 @@ function ProfileUpdate() {
             }
 
 
-            <div className=" h-40 lg:w-[40%] md:w-[50%] sm:w-[100%]  w-[100%] lg:h-[98%] md:h-[98%] sm:h-full  h-auto bg-white  flex flex-col  gap-3 md:rounded-2xl lg:rounded-2xl shadow-2xl  ">
-                <div className="text-green-900 text-xl flex items-center justify-between rounded-2xl bg-[#F7F6F4] lg:mt-0 md:mt-0 mt-5 py-4 px-5">
+            <div className=" h-40 lg:w-[40%] md:w-[50%] sm:w-[100%]  w-[100%] lg:h-[98%] sm:h-full  h-auto bg-white  flex flex-col  gap-3 md:rounded-2xl lg:rounded-2xl shadow-2xl  ">
+                <div className="text-green-900 text-xl flex items-center justify-between rounded-2xl bg-[#F7F6F4] py-4 px-5">
                     <i onClick={handleGoBack} className="cursor-pointer text-green-600 fa-solid fa-chevron-left fa-xl"></i>
                     <h1 className="font-bold text-2xl">Create Profile</h1>
                     <div className=""></div>
